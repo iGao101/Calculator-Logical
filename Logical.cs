@@ -351,8 +351,24 @@ namespace Logic
             if (value == "e" || value == "π")  //圆周率
                 return true;
             for (int i = 0; i < value.Length; i++)
-                if (!isNumber(value[i]))
-                    return false;
+            {
+                if (i == 0)
+                {
+                    if (!isNumber(value[i]))
+                    {
+                        if ((value[i] == '+' || value[i] == '-') && value.Length != 1)
+                            continue;
+                        else
+                            return false;
+                    }
+                }
+                else
+                {
+                    if (!isNumber(value[i]))
+                        return false;
+                }
+            }
+
             return true;
         }
         private bool isNumber(char value)
