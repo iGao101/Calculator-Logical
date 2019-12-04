@@ -115,7 +115,7 @@ namespace Logic
                     else
                     {
                         if (Process())
-                            operators.Push(value);  //添加新的运算符
+                            continue;
                         else
                         {
                             isError = true;
