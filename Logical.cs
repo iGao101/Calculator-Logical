@@ -12,6 +12,7 @@ namespace Logic
         Stack<String> numbers = new Stack<string>();   //数字符号栈
         Stack<String> operators = new Stack<string>();  //符号栈
         public bool isError = false;                                      //输入表达式是否正确
+        public int code = 0;                                                 //错误码 1:除零   2:ln小括号内小于等于0  tan中90的情况
 
         //分析界面传递的数组
         public string Analysis(ArrayList arrayList)
@@ -196,12 +197,18 @@ namespace Logic
                 case "*": result = n1 * n2; break;
                 case "/":
                     if (n2 == 0)
+                    {
+                        code = 1;
                         return "";
+                    }
                     result = n1 / n2;
                     break;
                 case "%":
                     if (n2 == 0)
+                    {
+                        code = 2;
                         return "";
+                    }
                     result = n1 % n2;
                     break;
                 case "^": result = Math.Pow(n1, n2); break;
@@ -230,45 +237,70 @@ namespace Logic
             {
                 case "log(":
                     if (n <= 0)
+                    {
+                        code = 2;
                         return "";
+                    } 
                     result = Math.Log10(n);
                     break;
                 case "ln(":
                     if (n <= 0)
+                    {
+                        code = 2;
                         return "";
+                    }
                     result = Math.Log(n);
                     break;
                 case "sin(": result = Math.Sin(n / 180 * Math.PI); break;  //计算时转换为弧度制
-                case "cos(":
-                    if (n % 90 == 0)
-                        return "";
-                    result = Math.Cos(n / 180 * Math.PI);
+                case "cos(":result = Math.Cos(n / 180 * Math.PI);
                     break;
-                case "tan(": result = Math.Tan(n / 180 * Math.PI); break;
+                case "tan(":
+                    if (n % 90 == 0)
+                    {
+                        code = 2;
+                        return "";
+                    }
+                    result = Math.Tan(n / 180 * Math.PI);
+                    break;
                 case "sin-1(":
                     if (n < -1 || n > 1)
+                    {
+                        code = 2;
                         return "";
+                    }
                     result = Math.Asin(n) / Math.PI * 180;                        //计算结果以角度制呈现
                     break;
                 case "cos-1(":
                     if (n < -1 || n > 1)
+                    {
+                        code = 2;
                         return "";
+                    }
                     result = Math.Acos(n) / Math.PI * 180;
                     break;
                 case "tan-1(": result = Math.Atan(n) / Math.PI * 180; break;
                 case "!":  //连乘
                     if (num.Contains("."))
+                    {
+                        code = 2;
                         return "";
+                    }
                     result = Multiply((int)n);
                     break;
                 case "1/x":
                     if (n == 0)
+                    {
+                        code = 1;
                         return "";
+                    }
                     result = 1 / n;
                     break;
                 case "√":
                     if (n < 0)
+                    {
+                        code = 2;
                         return "";
+                    }
                     result = Math.Sqrt(n);
                     break;
             }
